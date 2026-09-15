@@ -10,13 +10,26 @@ on:
       - main
 
 jobs:
+
   analyze:
+
+    name: CodeQL (${{ matrix.language }})
 
     runs-on: ubuntu-latest
 
     permissions:
       security-events: write
       contents: read
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        language:
+          - python
+          - javascript-typescript
+          - java-kotlin
+          - csharp
 
     steps:
 
@@ -26,7 +39,11 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
-          languages: python
+          languages: ${{ matrix.language }}
+          queries: security-and-quality
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
 
       - name: Analyze
         uses: github/codeql-action/analyze@v3
